@@ -3,132 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>預算管家 V6.2 (Calendar Edition)</title>
+    <title>預算管家 V6.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        .calendar-dot { width: 4px; height: 4px; border-radius: 50%; background-color: #8B5CF6; margin-top: 2px; }
+        .calendar-grid div { height: 38px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
     </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { brand: { 500: '#8B5CF6', 600: '#7C3AED', 100: '#EDE9FE' } }
+                    colors: { brand: { 500: '#8B5CF6', 600: '#7C3AED', 100: '#EDE9FE', 50: '#F5F3FF' } }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center py-6 px-4 pb-24">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-6 px-4 pb-20">
 
-    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden relative border border-gray-100">
+    <div class="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden relative border border-gray-100">
         
-        <button onclick="toggleSettings()" class="absolute top-5 right-5 text-purple-200 hover:text-white transition-colors z-20">
+        <button onclick="toggleSettings()" class="absolute top-6 right-6 text-purple-200 hover:text-white transition-colors z-20">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
         </button>
 
-        <div id="settingsPanel" class="hidden bg-brand-100 border-b border-purple-200 p-6 shadow-inner">
+        <div id="settingsPanel" class="hidden bg-brand-50 border-b border-purple-100 p-8 shadow-inner">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-[10px] font-black text-purple-600 uppercase mb-1">本週預算 (週一重置)</label>
-                    <input id="weekBudgetInput" type="number" class="w-full p-3 border-2 border-white rounded-xl font-bold text-purple-700 shadow-sm focus:outline-none focus:border-brand-500">
+                    <label class="block text-[10px] font-black text-purple-600 uppercase mb-2">週預算額度</label>
+                    <input id="weekBudgetInput" type="number" class="w-full p-3 bg-white border-2 border-purple-100 rounded-2xl font-bold text-purple-700">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black text-purple-600 uppercase mb-1">月預算 (5日結算)</label>
-                    <input id="monthBudgetInput" type="number" class="w-full p-3 border-2 border-white rounded-xl font-bold text-purple-700 shadow-sm focus:outline-none focus:border-brand-500">
+                    <label class="block text-[10px] font-black text-purple-600 uppercase mb-2">月預算額度 (5日結算)</label>
+                    <input id="monthBudgetInput" type="number" class="w-full p-3 bg-white border-2 border-purple-100 rounded-2xl font-bold text-purple-700">
                 </div>
-                <button onclick="saveSettings()" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold shadow-lg">儲存更新</button>
+                <button onclick="saveSettings()" class="w-full py-4 bg-brand-600 text-white rounded-2xl font-black shadow-lg active:scale-95 transition-all">儲存並刷新數據</button>
             </div>
         </div>
         
-        <div id="statusCard" class="bg-gradient-to-br from-purple-600 via-purple-500 to-indigo-600 text-white p-10 text-center relative overflow-hidden">
-            <div class="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
-            <p class="text-purple-100 text-[10px] tracking-widest uppercase mb-1 font-medium opacity-80 italic">Weekly Remaining</p>
-            <h1 class="text-6xl font-black tracking-tight mb-4">$ <span id="weekBalance">0</span></h1>
-            <div class="flex justify-between items-center bg-black/10 rounded-2xl p-4 text-xs backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-purple-600 to-indigo-700 text-white p-10 text-center relative">
+            <p class="text-purple-100 text-[11px] tracking-widest uppercase mb-2 font-bold opacity-70">Weekly Remaining</p>
+            <h1 class="text-6xl font-black tracking-tighter">$ <span id="weekBalance">----</span></h1>
+            <div class="flex justify-between mt-8 pt-6 border-t border-white/20">
                 <div class="text-left">
-                    <p class="opacity-60 text-[9px] font-bold">已花費</p>
-                    <p class="font-bold text-lg">$ <span id="weekSum">0</span></p>
+                    <p class="opacity-60 text-[9px] font-bold uppercase">已花費</p>
+                    <p class="font-black text-xl">$ <span id="weekSum">0</span></p>
                 </div>
-                <div class="w-[1px] h-8 bg-white/20"></div>
                 <div class="text-right">
-                    <p class="opacity-60 text-[9px] font-bold">總額度</p>
-                    <p class="font-bold text-lg">$ <span id="weekTotalLabel">2100</span></p>
+                    <p class="opacity-60 text-[9px] font-bold uppercase">總預算</p>
+                    <p class="font-black text-xl">$ <span id="weekTotalLabel">0</span></p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white px-6 py-4 border-b border-gray-100">
-            <div class="flex justify-between items-center mb-2">
-                <span id="monthTitle" class="text-xs font-black text-gray-400">---</span>
-                <span class="text-xs font-bold text-brand-600">剩餘 $<span id="monthBalance">0</span></span>
+        <div class="bg-white px-8 py-6">
+            <div class="flex justify-between items-center mb-3">
+                <span id="monthTitle" class="text-[10px] font-black text-gray-400 tracking-tighter uppercase">--/-- CYCLE</span>
+                <span class="text-sm font-black text-brand-600">剩餘 $<span id="monthBalance">----</span></span>
             </div>
-            <div class="w-full bg-gray-100 rounded-full h-3">
-                <div id="monthProgress" class="bg-brand-500 h-3 rounded-full transition-all duration-700 shadow-inner" style="width: 0%"></div>
+            <div class="w-full bg-gray-100 rounded-full h-4 shadow-inner p-1">
+                <div id="monthProgress" class="bg-brand-500 h-2 rounded-full transition-all duration-1000 shadow-md" style="width: 0%"></div>
             </div>
+            <div class="mt-2 text-[10px] text-gray-300 font-bold">月總額支出累計: $<span id="monthSum">0</span></div>
         </div>
 
-        <div class="p-6 bg-gray-50/50">
-            <div class="flex justify-between items-center mb-4 px-2">
-                <button onclick="changeMonth(-1)" class="text-brand-500 hover:bg-brand-100 w-8 h-8 rounded-full transition-all">&lt;</button>
-                <h3 id="calendarTitle" class="text-xs font-black text-gray-600 tracking-widest">2026 MARCH</h3>
-                <button onclick="changeMonth(1)" class="text-brand-500 hover:bg-brand-100 w-8 h-8 rounded-full transition-all">&gt;</button>
+        <div class="bg-gray-50/80 px-8 py-6 border-y border-gray-100">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="changeMonth(-1)" class="text-brand-500 font-black p-2">&lt;</button>
+                <h3 id="calendarTitle" class="text-xs font-black text-gray-600 tracking-[0.2em]">2026 APRIL</h3>
+                <button onclick="changeMonth(1)" class="text-brand-500 font-black p-2">&gt;</button>
             </div>
             <div class="grid grid-cols-7 gap-1 text-center text-[9px] font-black text-gray-300 uppercase mb-2">
                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
             </div>
-            <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-center"></div>
+            <div id="calendarGrid" class="grid grid-cols-7 gap-1 calendar-grid"></div>
         </div>
 
-        <div class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-3">
-                <input id="amountInput" type="number" placeholder="金額" inputmode="decimal" class="p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-xl font-bold focus:border-brand-500 focus:outline-none">
-                <input id="timeInput" type="datetime-local" class="p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-[10px] focus:outline-none">
+        <div class="p-8 space-y-4 bg-white">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-gray-400 ml-1">金額</label>
+                    <input id="amountInput" type="number" placeholder="0" inputmode="decimal" class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-2xl font-black focus:border-brand-500 focus:outline-none transition-all">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-gray-400 ml-1">時間日期</label>
+                    <input id="timeInput" type="datetime-local" class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-[10px] focus:outline-none">
+                </div>
             </div>
-            <input id="descInput" type="text" placeholder="備註 (例如：鹽酥雞)" class="w-full p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-500 focus:outline-none">
-            <button id="actionBtn" onclick="handleAction()" class="w-full py-4 bg-brand-600 text-white font-black rounded-2xl shadow-lg active:scale-95 transition-all">新增紀錄</button>
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-gray-400 ml-1">項目備註</label>
+                <input id="descInput" type="text" placeholder="例如：潤餅材料" class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-500 focus:outline-none">
+            </div>
+            <button onclick="handleAction()" class="w-full py-5 bg-brand-600 text-white font-black rounded-[1.5rem] text-lg shadow-xl active:scale-95 transition-all">確認新增項目</button>
         </div>
 
-        <div class="px-6 pb-6 space-y-2">
-            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-widest">最近 10 筆明細</h3>
-            <div id="expenseList" class="space-y-2"></div>
-        </div>
-
-        <div class="p-4 text-center border-t border-gray-50 bg-gray-50/30">
-            <button onclick="manualReset()" class="text-[9px] text-gray-300 underline font-medium">重置所有資料庫數據</button>
+        <div class="px-8 pb-10 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-widest">最近 10 筆明細</h3>
+                <button onclick="manualReset()" class="text-[9px] text-gray-200 underline">清空資料庫</button>
+            </div>
+            <div id="expenseList" class="space-y-3"></div>
         </div>
     </div>
 
 <script>
-    // 1. 初始化資料庫：確保新專案預設值正確
-    let data = JSON.parse(localStorage.getItem('food_budget_v6_2')) || { 
+    // 1. 初始化資料庫 (加入嚴格保護)
+    let data = JSON.parse(localStorage.getItem('food_budget_v6_3')) || { 
         expenses: [],
         weekTotal: 2100,
         monthTotal: 9000
     };
-    let editIndex = -1;
-    let currentCalDate = new Date(); // 月曆顯示基準
 
-    // 齒輪設定開關
-    function toggleSettings() {
-        const panel = document.getElementById('settingsPanel');
-        panel.classList.toggle('hidden');
-        document.getElementById('weekBudgetInput').value = data.weekTotal;
-        document.getElementById('monthBudgetInput').value = data.monthTotal;
-    }
+    let currentCalDate = new Date();
 
-    // 儲存設定並強制刷新
-    function saveSettings() {
-        data.weekTotal = parseFloat(document.getElementById('weekBudgetInput').value) || 2100;
-        data.monthTotal = parseFloat(document.getElementById('monthBudgetInput').value) || 9000;
-        saveAndRender();
-        toggleSettings();
-    }
-
-    // 取得 5日-4日 的結算區間
+    // 2. 核心時間邏輯 (5日結算)
     function getMonthRange() {
         const now = new Date();
         let start = new Date(now.getFullYear(), now.getMonth(), 5, 0, 0, 0);
@@ -137,7 +128,6 @@
         return { start: start.getTime(), end: end.getTime() };
     }
 
-    // 取得週一開始的區間
     function getWeekRange() {
         const now = new Date();
         const day = now.getDay();
@@ -147,50 +137,50 @@
         return { start, end };
     }
 
-    // 新增/編輯紀錄
+    // 3. 處理新增項目
     function handleAction() {
-        const amount = parseFloat(document.getElementById('amountInput').value);
-        const note = document.getElementById('descInput').value.trim() || "未命名";
-        const timeInputVal = document.getElementById('timeInput').value;
-        const time = timeInputVal ? new Date(timeInputVal).getTime() : Date.now();
-        
-        if (isNaN(amount) || amount <= 0) { alert("請輸入金額"); return; }
+        const amtInput = document.getElementById('amountInput');
+        const descInput = document.getElementById('descInput');
+        const timeInput = document.getElementById('timeInput');
 
-        if (editIndex === -1) {
-            data.expenses.push({ id: Date.now(), amount, note, timestamp: time });
-        } else {
-            const originalId = data.expenses[editIndex].id;
-            data.expenses[editIndex] = { id: originalId, amount, note, timestamp: time };
-            cancelEdit();
+        const amount = parseFloat(amtInput.value);
+        const note = descInput.value.trim() || "未命名項目";
+        const timestamp = new Date(timeInput.value).getTime();
+
+        if (isNaN(amount) || amount <= 0) {
+            alert("請輸入正確金額");
+            return;
         }
+
+        // 新增數據
+        const newItem = { id: Date.now(), amount, note, timestamp };
+        data.expenses.push(newItem);
         
+        // 排序 (最新的在最前)
         data.expenses.sort((a, b) => b.timestamp - a.timestamp);
-        document.getElementById('amountInput').value = '';
-        document.getElementById('descInput').value = '';
+
+        // 清空輸入框
+        amtInput.value = '';
+        descInput.value = '';
         resetTimeInput();
+
+        // 儲存並渲染
         saveAndRender();
     }
 
-    // 重置時間輸入框為「現在」
-    function resetTimeInput() {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('timeInput').value = now.toISOString().slice(0, 16);
-    }
-
     function saveAndRender() {
-        localStorage.setItem('food_budget_v6_2', JSON.stringify(data));
+        localStorage.setItem('food_budget_v6_3', JSON.stringify(data));
         render();
     }
 
-    // 修正後的月曆渲染：確保字體清晰且月份正確
+    // 4. 渲染月曆 (解決空白問題)
     function renderCalendar() {
         const year = currentCalDate.getFullYear();
         const month = currentCalDate.getMonth();
         const today = new Date();
         const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+        
         document.getElementById('calendarTitle').innerText = `${year} ${monthNames[month]}`;
-
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const grid = document.getElementById('calendarGrid');
@@ -201,15 +191,11 @@
         for (let day = 1; day <= daysInMonth; day++) {
             const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
             const isCycleStart = day === 5;
-            let cls = "text-gray-700"; // 加深字體顏色
-            if (isToday) cls = "bg-brand-600 text-white rounded-xl font-bold shadow-md";
-            else if (isCycleStart) cls = "text-brand-600 font-black ring-1 ring-brand-100 rounded-xl bg-brand-50";
+            let cls = "text-gray-600";
+            if (isToday) cls = "bg-brand-600 text-white rounded-2xl font-black shadow-lg scale-90";
+            else if (isCycleStart) cls = "text-brand-600 font-black bg-brand-50 rounded-2xl";
             
-            grid.innerHTML += `
-                <div class="h-10 flex flex-col items-center justify-center text-[11px] ${cls}">
-                    ${day}
-                    ${isCycleStart ? '<div class="w-1 h-1 bg-brand-500 rounded-full mt-0.5"></div>' : ''}
-                </div>`;
+            grid.innerHTML += `<div class="${cls}">${day}</div>`;
         }
     }
 
@@ -218,51 +204,76 @@
         renderCalendar();
     }
 
-    // 核心渲染：修正剩餘金額顯示邏輯
+    // 5. 渲染整體介面 (修正剩餘 0 邏輯)
     function render() {
         const week = getWeekRange();
         const month = getMonthRange();
         const weekSum = data.expenses.filter(i => i.timestamp >= week.start && i.timestamp <= week.end).reduce((s, i) => s + i.amount, 0);
         const monthSum = data.expenses.filter(i => i.timestamp >= month.start && i.timestamp <= month.end).reduce((s, i) => s + i.amount, 0);
 
-        // 週資訊更新
+        // 週數據
         document.getElementById('weekSum').innerText = Math.round(weekSum);
         document.getElementById('weekBalance').innerText = Math.round(data.weekTotal - weekSum);
         document.getElementById('weekTotalLabel').innerText = data.weekTotal;
 
-        // 月資訊更新 (4/5 結算點)
+        // 月數據 (5日週期)
         const mStart = new Date(month.start);
         const mEnd = new Date(month.end);
         document.getElementById('monthTitle').innerText = `${mStart.getMonth()+1}/${mStart.getDate()} - ${mEnd.getMonth()+1}/${mEnd.getDate()} CYCLE`;
         document.getElementById('monthSum').innerText = Math.round(monthSum);
         document.getElementById('monthBalance').innerText = Math.round(data.monthTotal - monthSum);
-        document.getElementById('monthTotalLabel').innerText = data.monthTotal;
-        
+
         const progress = Math.min((monthSum / data.monthTotal) * 100, 100);
         document.getElementById('monthProgress').style.width = progress + '%';
 
-        // 明細列表
+        // 渲染列表
         const list = document.getElementById('expenseList');
-        list.innerHTML = data.expenses.slice(0, 10).map((item) => {
-            const trueIndex = data.expenses.findIndex(i => i.id === item.id);
-            return `
-                <div class="bg-white p-3 rounded-2xl border border-gray-50 flex justify-between items-center text-sm shadow-sm transition-all">
-                    <div><span class="font-black text-gray-800">$${item.amount}</span> <span class="text-gray-400 text-xs ml-2">${item.note}</span></div>
-                    <div class="flex items-center space-x-3">
-                        <span class="text-[9px] text-gray-300 font-bold">${new Date(item.timestamp).getMonth()+1}/${new Date(item.timestamp).getDate()}</span>
-                        <button onclick="deleteItem(${trueIndex})" class="text-gray-300 hover:text-red-400 p-1">&times;</button>
+        const recentItems = data.expenses.slice(0, 10);
+
+        if (recentItems.length === 0) {
+            list.innerHTML = `<p class="text-center text-gray-300 text-[10px] py-10">尚無紀錄，開始記帳吧！</p>`;
+        } else {
+            list.innerHTML = recentItems.map((item) => {
+                const trueIdx = data.expenses.findIndex(i => i.id === item.id);
+                return `
+                    <div class="bg-gray-50 p-4 rounded-[1.2rem] flex justify-between items-center shadow-sm border border-white">
+                        <div>
+                            <p class="font-black text-gray-800 text-base">$${item.amount}</p>
+                            <p class="text-[10px] text-gray-400 font-bold">${item.note}</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-[9px] font-black text-gray-300">${new Date(item.timestamp).getMonth()+1}/${new Date(item.timestamp).getDate()}</span>
+                            <button onclick="deleteItem(${trueIdx})" class="text-red-200 hover:text-red-500 text-lg">&times;</button>
+                        </div>
                     </div>
-                </div>
-            `;
-        }).join('');
-        
+                `;
+            }).join('');
+        }
         renderCalendar();
     }
 
-    function deleteItem(idx) { if(confirm("確定刪除此筆紀錄？")) { data.expenses.splice(idx, 1); saveAndRender(); } }
-    function manualReset() { if(confirm("確定清空所有數據庫紀錄？")) { data.expenses = []; saveAndRender(); } }
-    
-    // 初始化執行
+    function toggleSettings() {
+        document.getElementById('settingsPanel').classList.toggle('hidden');
+        document.getElementById('weekBudgetInput').value = data.weekTotal;
+        document.getElementById('monthBudgetInput').value = data.monthTotal;
+    }
+
+    function saveSettings() {
+        data.weekTotal = parseFloat(document.getElementById('weekBudgetInput').value) || 2100;
+        data.monthTotal = parseFloat(document.getElementById('monthBudgetInput').value) || 9000;
+        saveAndRender();
+        toggleSettings();
+    }
+
+    function resetTimeInput() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('timeInput').value = now.toISOString().slice(0, 16);
+    }
+
+    function deleteItem(idx) { if(confirm("刪除這筆？")) { data.expenses.splice(idx, 1); saveAndRender(); } }
+    function manualReset() { if(confirm("全部清空？")) { data.expenses = []; saveAndRender(); } }
+
     resetTimeInput();
     render();
 </script>
