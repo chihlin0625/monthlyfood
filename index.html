@@ -103,20 +103,24 @@
     </div>
 
 <script>
+    // 1. 初始化資料庫：確保新專案預設值正確
     let data = JSON.parse(localStorage.getItem('food_budget_v6_2')) || { 
         expenses: [],
         weekTotal: 2100,
         monthTotal: 9000
     };
     let editIndex = -1;
-    let currentCalDate = new Date();
+    let currentCalDate = new Date(); // 月曆顯示基準
 
+    // 齒輪設定開關
     function toggleSettings() {
-        document.getElementById('settingsPanel').classList.toggle('hidden');
+        const panel = document.getElementById('settingsPanel');
+        panel.classList.toggle('hidden');
         document.getElementById('weekBudgetInput').value = data.weekTotal;
         document.getElementById('monthBudgetInput').value = data.monthTotal;
     }
 
+    // 儲存設定並強制刷新
     function saveSettings() {
         data.weekTotal = parseFloat(document.getElementById('weekBudgetInput').value) || 2100;
         data.monthTotal = parseFloat(document.getElementById('monthBudgetInput').value) || 9000;
@@ -124,6 +128,7 @@
         toggleSettings();
     }
 
+    // 取得 5日-4日 的結算區間
     function getMonthRange() {
         const now = new Date();
         let start = new Date(now.getFullYear(), now.getMonth(), 5, 0, 0, 0);
@@ -132,6 +137,7 @@
         return { start: start.getTime(), end: end.getTime() };
     }
 
+    // 取得週一開始的區間
     function getWeekRange() {
         const now = new Date();
         const day = now.getDay();
@@ -141,11 +147,14 @@
         return { start, end };
     }
 
+    // 新增/編輯紀錄
     function handleAction() {
         const amount = parseFloat(document.getElementById('amountInput').value);
         const note = document.getElementById('descInput').value.trim() || "未命名";
-        const time = new Date(document.getElementById('timeInput').value).getTime();
-        if (isNaN(amount) || amount <= 0) return;
+        const timeInputVal = document.getElementById('timeInput').value;
+        const time = timeInputVal ? new Date(timeInputVal).getTime() : Date.now();
+        
+        if (isNaN(amount) || amount <= 0) { alert("請輸入金額"); return; }
 
         if (editIndex === -1) {
             data.expenses.push({ id: Date.now(), amount, note, timestamp: time });
@@ -162,6 +171,7 @@
         saveAndRender();
     }
 
+    // 重置時間輸入框為「現在」
     function resetTimeInput() {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -173,11 +183,12 @@
         render();
     }
 
+    // 修正後的月曆渲染：確保字體清晰且月份正確
     function renderCalendar() {
         const year = currentCalDate.getFullYear();
         const month = currentCalDate.getMonth();
         const today = new Date();
-        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
         document.getElementById('calendarTitle').innerText = `${year} ${monthNames[month]}`;
 
         const firstDay = new Date(year, month, 1).getDay();
@@ -190,11 +201,15 @@
         for (let day = 1; day <= daysInMonth; day++) {
             const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
             const isCycleStart = day === 5;
-            let cls = "text-gray-400";
-            if (isToday) cls = "bg-brand-500 text-white rounded-xl font-bold shadow-md";
-            else if (isCycleStart) cls = "text-brand-600 font-black ring-1 ring-brand-100 rounded-xl";
+            let cls = "text-gray-700"; // 加深字體顏色
+            if (isToday) cls = "bg-brand-600 text-white rounded-xl font-bold shadow-md";
+            else if (isCycleStart) cls = "text-brand-600 font-black ring-1 ring-brand-100 rounded-xl bg-brand-50";
             
-            grid.innerHTML += `<div class="h-8 flex flex-col items-center justify-center text-[10px] ${cls}">${day}${isCycleStart ? '<div class="calendar-dot"></div>' : ''}</div>`;
+            grid.innerHTML += `
+                <div class="h-10 flex flex-col items-center justify-center text-[11px] ${cls}">
+                    ${day}
+                    ${isCycleStart ? '<div class="w-1 h-1 bg-brand-500 rounded-full mt-0.5"></div>' : ''}
+                </div>`;
         }
     }
 
@@ -203,45 +218,51 @@
         renderCalendar();
     }
 
+    // 核心渲染：修正剩餘金額顯示邏輯
     function render() {
         const week = getWeekRange();
         const month = getMonthRange();
         const weekSum = data.expenses.filter(i => i.timestamp >= week.start && i.timestamp <= week.end).reduce((s, i) => s + i.amount, 0);
         const monthSum = data.expenses.filter(i => i.timestamp >= month.start && i.timestamp <= month.end).reduce((s, i) => s + i.amount, 0);
 
-        document.getElementById('weekSum').innerText = weekSum;
-        document.getElementById('weekBalance').innerText = data.weekTotal - weekSum;
+        // 週資訊更新
+        document.getElementById('weekSum').innerText = Math.round(weekSum);
+        document.getElementById('weekBalance').innerText = Math.round(data.weekTotal - weekSum);
         document.getElementById('weekTotalLabel').innerText = data.weekTotal;
 
+        // 月資訊更新 (4/5 結算點)
         const mStart = new Date(month.start);
         const mEnd = new Date(month.end);
         document.getElementById('monthTitle').innerText = `${mStart.getMonth()+1}/${mStart.getDate()} - ${mEnd.getMonth()+1}/${mEnd.getDate()} CYCLE`;
-        document.getElementById('monthSum').innerText = monthSum;
-        document.getElementById('monthBalance').innerText = data.monthTotal - monthSum;
+        document.getElementById('monthSum').innerText = Math.round(monthSum);
+        document.getElementById('monthBalance').innerText = Math.round(data.monthTotal - monthSum);
         document.getElementById('monthTotalLabel').innerText = data.monthTotal;
         
         const progress = Math.min((monthSum / data.monthTotal) * 100, 100);
         document.getElementById('monthProgress').style.width = progress + '%';
 
+        // 明細列表
         const list = document.getElementById('expenseList');
         list.innerHTML = data.expenses.slice(0, 10).map((item) => {
             const trueIndex = data.expenses.findIndex(i => i.id === item.id);
             return `
-                <div class="bg-white p-3 rounded-2xl border border-gray-50 flex justify-between items-center text-sm shadow-sm">
+                <div class="bg-white p-3 rounded-2xl border border-gray-50 flex justify-between items-center text-sm shadow-sm transition-all">
                     <div><span class="font-black text-gray-800">$${item.amount}</span> <span class="text-gray-400 text-xs ml-2">${item.note}</span></div>
                     <div class="flex items-center space-x-3">
                         <span class="text-[9px] text-gray-300 font-bold">${new Date(item.timestamp).getMonth()+1}/${new Date(item.timestamp).getDate()}</span>
-                        <button onclick="deleteItem(${trueIndex})" class="text-gray-300 hover:text-red-400 transition-colors">&times;</button>
+                        <button onclick="deleteItem(${trueIndex})" class="text-gray-300 hover:text-red-400 p-1">&times;</button>
                     </div>
                 </div>
             `;
         }).join('');
+        
         renderCalendar();
     }
 
-    function deleteItem(idx) { if(confirm("刪除？")) { data.expenses.splice(idx, 1); saveAndRender(); } }
-    function manualReset() { if(confirm("確定清空？")) { data.expenses = []; saveAndRender(); } }
+    function deleteItem(idx) { if(confirm("確定刪除此筆紀錄？")) { data.expenses.splice(idx, 1); saveAndRender(); } }
+    function manualReset() { if(confirm("確定清空所有數據庫紀錄？")) { data.expenses = []; saveAndRender(); } }
     
+    // 初始化執行
     resetTimeInput();
     render();
 </script>
