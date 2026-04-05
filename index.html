@@ -3,57 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>預算管家 V6.3</title>
+    <title>預算管家 V6.3.1 - True Purple</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        .calendar-grid div { height: 38px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        /* 修正月曆高度與文字顏色 */
+        .calendar-grid div { height: 40px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #6B7280; }
     </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { brand: { 500: '#8B5CF6', 600: '#7C3AED', 100: '#EDE9FE', 50: '#F5F3FF' } }
+                    colors: { 
+                        brand: { 
+                            50: '#F5F3FF', 
+                            100: '#EDE9FE', 
+                            500: '#A855F7', // 亮紫色
+                            600: '#9333EA', // 深紫色
+                            700: '#7E22CE'  // 濃紫色
+                        } 
+                    }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center py-6 px-4 pb-20">
+<body class="bg-purple-50/30 min-h-screen flex flex-col items-center py-6 px-4 pb-20">
 
-    <div class="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden relative border border-gray-100">
+    <div class="w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden relative border border-purple-50">
         
         <button onclick="toggleSettings()" class="absolute top-6 right-6 text-purple-200 hover:text-white transition-colors z-20">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
         </button>
 
         <div id="settingsPanel" class="hidden bg-brand-50 border-b border-purple-100 p-8 shadow-inner">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-[10px] font-black text-purple-600 uppercase mb-2">週預算額度</label>
-                    <input id="weekBudgetInput" type="number" class="w-full p-3 bg-white border-2 border-purple-100 rounded-2xl font-bold text-purple-700">
+                    <label class="block text-[10px] font-black text-brand-600 uppercase mb-2">週預算額度</label>
+                    <input id="weekBudgetInput" type="number" class="w-full p-4 bg-white border-2 border-brand-100 rounded-2xl font-bold text-brand-700 focus:border-brand-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black text-purple-600 uppercase mb-2">月預算額度 (5日結算)</label>
-                    <input id="monthBudgetInput" type="number" class="w-full p-3 bg-white border-2 border-purple-100 rounded-2xl font-bold text-purple-700">
+                    <label class="block text-[10px] font-black text-brand-600 uppercase mb-2">月預算額度 (5日結算)</label>
+                    <input id="monthBudgetInput" type="number" class="w-full p-4 bg-white border-2 border-brand-100 rounded-2xl font-bold text-brand-700 focus:border-brand-500 outline-none">
                 </div>
-                <button onclick="saveSettings()" class="w-full py-4 bg-brand-600 text-white rounded-2xl font-black shadow-lg active:scale-95 transition-all">儲存並刷新數據</button>
+                <button onclick="saveSettings()" class="w-full py-4 bg-brand-600 text-white rounded-2xl font-black shadow-lg active:scale-95 transition-all">更新預算設定</button>
             </div>
         </div>
         
-        <div class="bg-gradient-to-br from-purple-600 to-indigo-700 text-white p-10 text-center relative">
-            <p class="text-purple-100 text-[11px] tracking-widest uppercase mb-2 font-bold opacity-70">Weekly Remaining</p>
+        <div class="bg-gradient-to-br from-brand-700 via-brand-600 to-purple-500 text-white p-10 text-center relative">
+            <p class="text-brand-100 text-[11px] tracking-widest uppercase mb-2 font-bold opacity-80">Weekly Remaining</p>
             <h1 class="text-6xl font-black tracking-tighter">$ <span id="weekBalance">----</span></h1>
             <div class="flex justify-between mt-8 pt-6 border-t border-white/20">
                 <div class="text-left">
-                    <p class="opacity-60 text-[9px] font-bold uppercase">已花費</p>
+                    <p class="opacity-70 text-[9px] font-bold uppercase">已花費</p>
                     <p class="font-black text-xl">$ <span id="weekSum">0</span></p>
                 </div>
                 <div class="text-right">
-                    <p class="opacity-60 text-[9px] font-bold uppercase">總預算</p>
+                    <p class="opacity-70 text-[9px] font-bold uppercase">總預算</p>
                     <p class="font-black text-xl">$ <span id="weekTotalLabel">0</span></p>
                 </div>
             </div>
@@ -61,20 +70,19 @@
 
         <div class="bg-white px-8 py-6">
             <div class="flex justify-between items-center mb-3">
-                <span id="monthTitle" class="text-[10px] font-black text-gray-400 tracking-tighter uppercase">--/-- CYCLE</span>
+                <span id="monthTitle" class="text-[10px] font-black text-gray-400 tracking-tight uppercase">--/-- CYCLE</span>
                 <span class="text-sm font-black text-brand-600">剩餘 $<span id="monthBalance">----</span></span>
             </div>
-            <div class="w-full bg-gray-100 rounded-full h-4 shadow-inner p-1">
-                <div id="monthProgress" class="bg-brand-500 h-2 rounded-full transition-all duration-1000 shadow-md" style="width: 0%"></div>
+            <div class="w-full bg-brand-50 rounded-full h-4 shadow-inner p-1 border border-brand-100">
+                <div id="monthProgress" class="bg-brand-500 h-2 rounded-full transition-all duration-1000 shadow-sm" style="width: 0%"></div>
             </div>
-            <div class="mt-2 text-[10px] text-gray-300 font-bold">月總額支出累計: $<span id="monthSum">0</span></div>
         </div>
 
-        <div class="bg-gray-50/80 px-8 py-6 border-y border-gray-100">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="changeMonth(-1)" class="text-brand-500 font-black p-2">&lt;</button>
-                <h3 id="calendarTitle" class="text-xs font-black text-gray-600 tracking-[0.2em]">2026 APRIL</h3>
-                <button onclick="changeMonth(1)" class="text-brand-500 font-black p-2">&gt;</button>
+        <div class="bg-gray-50/50 px-8 py-6 border-y border-gray-100">
+            <div class="flex justify-between items-center mb-4 px-2">
+                <button onclick="changeMonth(-1)" class="text-brand-500 font-black text-lg p-1 hover:scale-125 transition-transform">&lt;</button>
+                <h3 id="calendarTitle" class="text-xs font-black text-gray-500 tracking-[0.25em]">2026 APRIL</h3>
+                <button onclick="changeMonth(1)" class="text-brand-500 font-black text-lg p-1 hover:scale-125 transition-transform">&gt;</button>
             </div>
             <div class="grid grid-cols-7 gap-1 text-center text-[9px] font-black text-gray-300 uppercase mb-2">
                 <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
@@ -82,36 +90,36 @@
             <div id="calendarGrid" class="grid grid-cols-7 gap-1 calendar-grid"></div>
         </div>
 
-        <div class="p-8 space-y-4 bg-white">
+        <div class="p-8 space-y-5 bg-white">
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-[10px] font-black text-gray-400 ml-1">金額</label>
                     <input id="amountInput" type="number" placeholder="0" inputmode="decimal" class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-2xl font-black focus:border-brand-500 focus:outline-none transition-all">
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black text-gray-400 ml-1">時間日期</label>
+                    <label class="text-[10px] font-black text-gray-400 ml-1">時間</label>
                     <input id="timeInput" type="datetime-local" class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-[10px] focus:outline-none">
                 </div>
             </div>
             <div class="space-y-1">
                 <label class="text-[10px] font-black text-gray-400 ml-1">項目備註</label>
-                <input id="descInput" type="text" placeholder="例如：潤餅材料" class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-500 focus:outline-none">
+                <input id="descInput" type="text" placeholder="潤餅材料、買票基金..." class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-500 focus:outline-none">
             </div>
-            <button onclick="handleAction()" class="w-full py-5 bg-brand-600 text-white font-black rounded-[1.5rem] text-lg shadow-xl active:scale-95 transition-all">確認新增項目</button>
+            <button onclick="handleAction()" class="w-full py-5 bg-brand-600 text-white font-black rounded-2xl text-lg shadow-xl active:scale-95 transition-all hover:bg-brand-700">新增紀錄</button>
         </div>
 
         <div class="px-8 pb-10 space-y-4">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center px-1">
                 <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-widest">最近 10 筆明細</h3>
-                <button onclick="manualReset()" class="text-[9px] text-gray-200 underline">清空資料庫</button>
+                <button onclick="manualReset()" class="text-[9px] text-gray-200 hover:text-red-300 underline transition-colors">清空數據</button>
             </div>
             <div id="expenseList" class="space-y-3"></div>
         </div>
     </div>
 
 <script>
-    // 1. 初始化資料庫 (加入嚴格保護)
-    let data = JSON.parse(localStorage.getItem('food_budget_v6_3')) || { 
+    // 資料庫初始化
+    let data = JSON.parse(localStorage.getItem('food_budget_v6_3_1')) || { 
         expenses: [],
         weekTotal: 2100,
         monthTotal: 9000
@@ -119,7 +127,6 @@
 
     let currentCalDate = new Date();
 
-    // 2. 核心時間邏輯 (5日結算)
     function getMonthRange() {
         const now = new Date();
         let start = new Date(now.getFullYear(), now.getMonth(), 5, 0, 0, 0);
@@ -137,43 +144,31 @@
         return { start, end };
     }
 
-    // 3. 處理新增項目
     function handleAction() {
         const amtInput = document.getElementById('amountInput');
         const descInput = document.getElementById('descInput');
         const timeInput = document.getElementById('timeInput');
 
         const amount = parseFloat(amtInput.value);
-        const note = descInput.value.trim() || "未命名項目";
+        const note = descInput.value.trim() || "未命名";
         const timestamp = new Date(timeInput.value).getTime();
 
-        if (isNaN(amount) || amount <= 0) {
-            alert("請輸入正確金額");
-            return;
-        }
+        if (isNaN(amount) || amount <= 0) return;
 
-        // 新增數據
-        const newItem = { id: Date.now(), amount, note, timestamp };
-        data.expenses.push(newItem);
-        
-        // 排序 (最新的在最前)
+        data.expenses.unshift({ id: Date.now(), amount, note, timestamp });
         data.expenses.sort((a, b) => b.timestamp - a.timestamp);
 
-        // 清空輸入框
         amtInput.value = '';
         descInput.value = '';
         resetTimeInput();
-
-        // 儲存並渲染
         saveAndRender();
     }
 
     function saveAndRender() {
-        localStorage.setItem('food_budget_v6_3', JSON.stringify(data));
+        localStorage.setItem('food_budget_v6_3_1', JSON.stringify(data));
         render();
     }
 
-    // 4. 渲染月曆 (解決空白問題)
     function renderCalendar() {
         const year = currentCalDate.getFullYear();
         const month = currentCalDate.getMonth();
@@ -191,9 +186,9 @@
         for (let day = 1; day <= daysInMonth; day++) {
             const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
             const isCycleStart = day === 5;
-            let cls = "text-gray-600";
-            if (isToday) cls = "bg-brand-600 text-white rounded-2xl font-black shadow-lg scale-90";
-            else if (isCycleStart) cls = "text-brand-600 font-black bg-brand-50 rounded-2xl";
+            let cls = "";
+            if (isToday) cls = "bg-brand-600 text-white rounded-2xl shadow-md scale-90";
+            else if (isCycleStart) cls = "text-brand-600 font-black bg-brand-100 rounded-2xl";
             
             grid.innerHTML += `<div class="${cls}">${day}</div>`;
         }
@@ -204,19 +199,16 @@
         renderCalendar();
     }
 
-    // 5. 渲染整體介面 (修正剩餘 0 邏輯)
     function render() {
         const week = getWeekRange();
         const month = getMonthRange();
         const weekSum = data.expenses.filter(i => i.timestamp >= week.start && i.timestamp <= week.end).reduce((s, i) => s + i.amount, 0);
         const monthSum = data.expenses.filter(i => i.timestamp >= month.start && i.timestamp <= month.end).reduce((s, i) => s + i.amount, 0);
 
-        // 週數據
         document.getElementById('weekSum').innerText = Math.round(weekSum);
         document.getElementById('weekBalance').innerText = Math.round(data.weekTotal - weekSum);
         document.getElementById('weekTotalLabel').innerText = data.weekTotal;
 
-        // 月數據 (5日週期)
         const mStart = new Date(month.start);
         const mEnd = new Date(month.end);
         document.getElementById('monthTitle').innerText = `${mStart.getMonth()+1}/${mStart.getDate()} - ${mEnd.getMonth()+1}/${mEnd.getDate()} CYCLE`;
@@ -226,29 +218,26 @@
         const progress = Math.min((monthSum / data.monthTotal) * 100, 100);
         document.getElementById('monthProgress').style.width = progress + '%';
 
-        // 渲染列表
         const list = document.getElementById('expenseList');
         const recentItems = data.expenses.slice(0, 10);
 
-        if (recentItems.length === 0) {
-            list.innerHTML = `<p class="text-center text-gray-300 text-[10px] py-10">尚無紀錄，開始記帳吧！</p>`;
-        } else {
-            list.innerHTML = recentItems.map((item) => {
+        list.innerHTML = recentItems.length === 0 
+            ? `<p class="text-center text-gray-300 text-[10px] py-10 italic">尚未開始記帳</p>`
+            : recentItems.map((item) => {
                 const trueIdx = data.expenses.findIndex(i => i.id === item.id);
                 return `
-                    <div class="bg-gray-50 p-4 rounded-[1.2rem] flex justify-between items-center shadow-sm border border-white">
+                    <div class="bg-gray-50/80 p-4 rounded-2xl flex justify-between items-center border border-white shadow-sm hover:border-brand-100 transition-colors">
                         <div>
                             <p class="font-black text-gray-800 text-base">$${item.amount}</p>
-                            <p class="text-[10px] text-gray-400 font-bold">${item.note}</p>
+                            <p class="text-[10px] text-gray-400 font-black uppercase">${item.note}</p>
                         </div>
                         <div class="flex items-center space-x-3">
                             <span class="text-[9px] font-black text-gray-300">${new Date(item.timestamp).getMonth()+1}/${new Date(item.timestamp).getDate()}</span>
-                            <button onclick="deleteItem(${trueIdx})" class="text-red-200 hover:text-red-500 text-lg">&times;</button>
+                            <button onclick="deleteItem(${trueIdx})" class="text-red-200 hover:text-red-500 text-xl font-light">&times;</button>
                         </div>
                     </div>
                 `;
             }).join('');
-        }
         renderCalendar();
     }
 
@@ -271,8 +260,8 @@
         document.getElementById('timeInput').value = now.toISOString().slice(0, 16);
     }
 
-    function deleteItem(idx) { if(confirm("刪除這筆？")) { data.expenses.splice(idx, 1); saveAndRender(); } }
-    function manualReset() { if(confirm("全部清空？")) { data.expenses = []; saveAndRender(); } }
+    function deleteItem(idx) { if(confirm("確定刪除？")) { data.expenses.splice(idx, 1); saveAndRender(); } }
+    function manualReset() { if(confirm("確定清空？")) { data.expenses = []; saveAndRender(); } }
 
     resetTimeInput();
     render();
